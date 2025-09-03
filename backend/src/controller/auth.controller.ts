@@ -3,8 +3,6 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.model";
 import { sendOTP } from "../utils/sendMail";
 
-
-
 const otpStore: { [email: string]: { otp: string; expires: number } } = {};
 
 //  Request OTP
@@ -49,7 +47,9 @@ export const verifyOtp = async (req: Request, res: Response) => {
     // Clear OTP after use
     delete otpStore[email];
 
-    const token = jwt.sign({ id: user?._id },"notessecret", { expiresIn: "1h" });
+    const token = jwt.sign({ id: user?._id }, "notessecret", {
+      expiresIn: "1h",
+    });
 
     return res.json({
       message: `${mode === "signup" ? "Signup" : "Login"} successful`,
@@ -58,5 +58,18 @@ export const verifyOtp = async (req: Request, res: Response) => {
     });
   } catch (err) {
     return res.status(500).json({ message: "Error verifying OTP" });
+  }
+};
+
+export const getUser = async (
+  req: Request & { userId?: string },
+  res: Response
+) => {
+  try {
+    const user = await User.findById(req.userId).select("name email");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    return res.json({ user });
+  } catch (err) {
+    return res.status(500).json({ message: "Error fetching user" });
   }
 };
