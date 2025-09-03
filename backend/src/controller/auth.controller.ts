@@ -1,75 +1,62 @@
 import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
 import User from "../models/user.model";
 import { sendOTP } from "../utils/sendMail";
 
-// In-memory OTP store for development purpose
-const otpStore: { [key: string]: { otp: string; expiresAt: number } } = {};
 
-/**
- * Request OTP Controller
- */
-export const requestOTP = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+
+const otpStore: { [email: string]: { otp: string; expires: number } } = {};
+
+//  Request OTP
+export const requestOtp = async (req: Request, res: Response) => {
   try {
-    const { name, dob, email } = req.body;
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required" });
 
-    if (!name || !dob || !email) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
-    const otp = Math.floor(100000 + Math.random() * 900000).toString(); //6 digit otp
-    otpStore[email] = { otp, expiresAt: Date.now() + 3 * 60 * 1000 }; // valid 3 min
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    otpStore[email] = { otp, expires: Date.now() + 5 * 60 * 1000 }; // 5 minute otp expiry
 
     await sendOTP(email, otp);
-
-    return res.status(200).json({ message: "OTP sent to email" });
-  } catch (error) {
-    console.error("OTP request failed:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.json({ message: "OTP sent successfully" });
+  } catch (err) {
+    return res.status(500).json({ message: "Error sending OTP" });
   }
 };
 
-/**
- * Verify OTP Controller
- */
-export const verifyOTP = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+//  Verify OTP
+export const verifyOtp = async (req: Request, res: Response) => {
   try {
-    const { name, dob, email, otp } = req.body;
-
-    if (!otpStore[email]) {
-      return res.status(400).json({ message: "OTP not requested or expired" });
+    const { email, otp, mode, name, dob } = req.body;
+    if (!email || !otp || !mode) {
+      return res.status(400).json({ message: "Missing fields" });
     }
 
-    const { otp: storedOtp, expiresAt } = otpStore[email];
-
-    if (Date.now() > expiresAt) {
-      delete otpStore[email];
-      return res.status(400).json({ message: "OTP expired" });
+    const stored = otpStore[email];
+    if (!stored || stored.otp !== otp || stored.expires < Date.now()) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
-    if (storedOtp !== otp) {
-      return res.status(400).json({ message: "Invalid OTP" });
-    }
-
-    // Save user in DB
     let user = await User.findOne({ email });
-    if (!user) {
-      user = new User({ name, dob, email, isVerified: true });
+
+    if (mode === "signup") {
+      if (user) return res.status(400).json({ message: "User already exists" });
+      user = new User({ name, dob, email, provider: "email" });
       await user.save();
-    } else {
-      user.isVerified = true;
-      await user.save();
+    } else if (mode === "login") {
+      if (!user) return res.status(400).json({ message: "User not found" });
     }
 
+    // Clear OTP after use
     delete otpStore[email];
-    return res.status(201).json({ message: "Signup successful", user });
-  } catch (error) {
-    console.error("OTP verification failed:", error);
-    return res.status(500).json({ message: "Internal server error" });
+
+    const token = jwt.sign({ id: user?._id },"notessecret", { expiresIn: "1h" });
+
+    return res.json({
+      message: `${mode === "signup" ? "Signup" : "Login"} successful`,
+      token,
+      user,
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Error verifying OTP" });
   }
 };
