@@ -9,6 +9,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 export const googleAuth = async (req: Request, res: Response) => {
   try {
     const { token } = req.body;
+    console.log('token', token)
     if (!token) return res.status(400).json({ message: "Token missing" });
 
     // Verify token
@@ -20,6 +21,7 @@ export const googleAuth = async (req: Request, res: Response) => {
     const payload = ticket.getPayload();
     if (!payload) return res.status(400).json({ message: "Invalid token" });
 
+    console.log('payload', payload)
     const { email, name } = payload;
 
     // Find or create user
@@ -44,6 +46,7 @@ export const googleAuth = async (req: Request, res: Response) => {
       user: { name: user.name, email: user.email },
     });
   } catch (err) {
+    console.error("Google Auth Error:", err)
     return res.status(500).json({ message: "Google Auth failed", error: err });
   }
 };
