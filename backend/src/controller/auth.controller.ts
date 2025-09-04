@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.model";
 import { sendOTP } from "../utils/sendMail";
 
+//otp store for development purpose
 const otpStore: { [email: string]: { otp: string; expires: number } } = {};
 
 //  Request OTP
@@ -61,6 +62,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
   }
 };
 
+//get user information/data
 export const getUser = async (
   req: Request & { userId?: string },
   res: Response

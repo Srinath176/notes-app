@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
+//define user object
 export interface IUser extends Document {
   name: string;
   dob: Date;
@@ -7,6 +8,7 @@ export interface IUser extends Document {
   isVerified: boolean;
 }
 
+//create user schema
 const userSchema = new Schema<IUser>(
   {
     name: { type: String, required: true },

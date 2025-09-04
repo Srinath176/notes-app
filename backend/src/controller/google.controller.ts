@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+//google signin setup
 export const googleAuth = async (req: Request, res: Response) => {
   try {
     const { token } = req.body;

@@ -6,7 +6,7 @@ import { Loader } from "lucide-react";
 import { GoogleLogin } from "@react-oauth/google";
 import API from "../api/authApi";
 
-export default function Signin() {
+function Signin() {
   const [step, setStep] = useState<"form" | "otp">("form");
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -16,6 +16,7 @@ export default function Signin() {
   });
   const navigate = useNavigate();
 
+  // handle form data
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -24,6 +25,7 @@ export default function Signin() {
     });
   };
 
+  //request otp handler
   const handleRequestOtp = async () => {
     if (!formData.email) {
       toast.error("Email is required");
@@ -45,6 +47,7 @@ export default function Signin() {
     }
   };
 
+  //verify otp handler
   const handleVerifyOtp = async () => {
     if (!formData.otp) {
       toast.error("Please enter OTP");
@@ -192,3 +195,6 @@ export default function Signin() {
     </div>
   );
 }
+
+
+export default Signin;

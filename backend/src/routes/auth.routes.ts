@@ -10,7 +10,7 @@ authRoutes.post("/request-otp", requestOtp);
 authRoutes.post("/verify-otp", verifyOtp);
 authRoutes.get("/user",authMiddleware, getUser)
 
-//google
+//google auth route
 authRoutes.post("/google", googleAuth)
 
 export default authRoutes;

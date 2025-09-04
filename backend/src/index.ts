@@ -5,12 +5,14 @@ import { connectDB } from "./config/db";
 import authRoutes from "./routes/auth.routes";
 import noteRoutes from "./routes/note.routes";
 
-
+//env config middleware
 dotenv.config();
 
-
+//init express
 const app = express();
+//cors middleware
 app.use(cors());
+//parse json 
 app.use(express.json());
 
 //connect to database

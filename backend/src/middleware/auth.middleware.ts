@@ -6,6 +6,7 @@ interface JwtPayload {
   id: string;
 }
 
+//authentication middleware and user logs
 export const authMiddleware = (
   req: Request & { userId?: string },
   res: Response,
@@ -15,7 +16,7 @@ export const authMiddleware = (
   const token = authHeader && authHeader.split(" ")[1]; // "Bearer <token>"
 
   if (!token) {
-    console.warn("❌ No token provided in request headers");
+    console.warn(" No token provided in request headers");
     return res.status(401).json({ message: "No token provided" });
   }
 
@@ -24,7 +25,7 @@ export const authMiddleware = (
     req.userId = decoded.id;
 
     // ✅ Debug log
-    console.log("🔑 Authenticated request:", {
+    console.log(" Authenticated request:", {
       userId: req.userId,
       path: req.path,
       method: req.method,
@@ -32,7 +33,7 @@ export const authMiddleware = (
 
     return next();
   } catch (err) {
-    console.error("❌ JWT verification failed:", err);
+    console.error(" JWT verification failed:", err);
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
