@@ -3,6 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { requestOtp, verifyOtp } from "../api/auth";
 import { Loader } from "lucide-react";
+import { GoogleLogin } from "@react-oauth/google";
+import API from "../api/authApi";
 
 export default function Signup() {
   const [step, setStep] = useState<"form" | "otp">("form");
@@ -70,11 +72,15 @@ export default function Signup() {
         <div className="flex flex-col w-full md:w-1/2 p-8 md:p-10 justify-center">
           {/* Logo */}
           <div className="flex items-center justify-center md:justify-start mb-6">
-            <div className="h-6 w-6 rounded-full text-blue-500 mr-2"><Loader /></div>
+            <div className="h-6 w-6 rounded-full text-blue-500 mr-2">
+              <Loader />
+            </div>
             <span className="text-xl font-semibold">HD</span>
           </div>
 
-          <h2 className="text-3xl font-bold mb-2 text-center md:text-left">Sign up</h2>
+          <h2 className="text-3xl font-bold mb-2 text-center md:text-left">
+            Sign up
+          </h2>
           <p className="text-gray-500 mb-6 text-center md:text-left">
             Sign up to enjoy the features of HD
           </p>
@@ -142,11 +148,41 @@ export default function Signup() {
               Sign in
             </Link>
           </p>
+
+          {/* Divider */}
+          <div className="flex items-center my-6">
+            <hr className="flex-grow border-gray-300" />
+            <span className="mx-2 text-gray-500 text-sm">or</span>
+            <hr className="flex-grow border-gray-300" />
+          </div>
+
+          {/* Google Login Button */}
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              try {
+                const res = await API.post("/auth/google", {
+                  token: credentialResponse.credential,
+                });
+                localStorage.setItem("token", res.data.token);
+                toast.success("Google login successful");
+                navigate("/dashboard");
+              } catch (err) {
+                toast.error("Google login failed");
+              }
+            }}
+            onError={() => {
+              toast.error("Google login failed");
+            }}
+          />
         </div>
 
         {/* Right Section (hidden on mobile) */}
         <div className="hidden md:block w-1/2">
-          <img src="/right-column.png" alt="Signup" className="h-full w-full object-cover" />
+          <img
+            src="/right-column.png"
+            alt="Signup"
+            className="h-full w-full object-cover"
+          />
         </div>
       </div>
     </div>
