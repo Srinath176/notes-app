@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { requestOtp, verifyOtp } from "../api/auth";
+import { Loader } from "lucide-react";
 
 export default function Signin() {
   const [step, setStep] = useState<"form" | "otp">("form");
@@ -72,7 +73,7 @@ export default function Signin() {
         <div className="flex flex-col w-full md:w-1/2 p-8 md:p-10 justify-center">
           {/* Logo */}
           <div className="flex items-center justify-center md:justify-start mb-6">
-            <div className="h-6 w-6 rounded-full bg-blue-600 animate-spin mr-2"></div>
+            <div className="h-6 w-6 rounded-full text-blue-500 mr-2"><Loader /></div>
             <span className="text-xl font-semibold">HD</span>
           </div>
 

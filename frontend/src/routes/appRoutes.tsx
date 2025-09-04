@@ -4,6 +4,7 @@ import Signin from "../pages/SignIn";
 import Dashboard from "../pages/Dashboard";
 import NotFound from "../pages/NotFound";
 import Home from "../components/Home";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 const appRoutes = createBrowserRouter([
   {
@@ -20,7 +21,11 @@ const appRoutes = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <Dashboard />,
+    element: (
+      <ProtectedRoute>
+        <Dashboard />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "*",
