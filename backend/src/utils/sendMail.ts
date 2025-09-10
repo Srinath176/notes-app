@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -14,7 +14,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-
 console.log("EMAIL_USER:", process.env.EMAIL_USER);
 console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
 
@@ -23,7 +22,7 @@ export const sendOTP = async (email: string, otp: string) => {
     from: `"Notes App" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: "Your OTP for Signup",
-    text: `Your OTP is: ${otp}. It is valid for 3 minutes.`,
+    text: `Your OTP is: ${otp}. It is valid for 5 minutes`,
   };
 
   await transporter.sendMail(mailOptions);

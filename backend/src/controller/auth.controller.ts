@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model";
 import { sendOTP } from "../utils/sendMail";
+import crypto from "crypto";
 
 //otp store for development purpose
 const otpStore: { [email: string]: { otp: string; expires: number } } = {};
@@ -12,7 +13,7 @@ export const requestOtp = async (req: Request, res: Response) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email is required" });
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = crypto.randomInt(100000, 900000).toString(); // create 6 digit otp number
     otpStore[email] = { otp, expires: Date.now() + 5 * 60 * 1000 }; // 5 minute otp expiry
 
     await sendOTP(email, otp);
