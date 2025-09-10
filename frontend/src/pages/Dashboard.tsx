@@ -90,7 +90,7 @@ const Dashboard = () => {
       <nav className="flex justify-around items-center px-6 py-4 bg-white shadow">
         <div className="flex items-center">
           <div className="h-6 w-6 rounded-full text-blue-500 mr-2"><Loader /></div>
-          <span className="text-xl font-semibold">HD</span>
+          <span className="text-xl font-semibold">Dashboard</span>
         </div>
         <button
           onClick={handleSignOut}

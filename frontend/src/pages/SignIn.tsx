@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { requestOtp, verifyOtp } from "../api/auth";
 import { Loader } from "lucide-react";
 import { GoogleLogin } from "@react-oauth/google";
@@ -76,6 +76,7 @@ function Signin() {
       <div className="flex flex-col md:flex-row w-full md:w-[900px] max-w-5xl overflow-hidden rounded-2xl shadow-lg bg-white">
         {/* Left Section */}
         <div className="flex flex-col w-full md:w-1/2 p-8 md:p-10 justify-center">
+        <Toaster />
           {/* Logo */}
           <div className="flex items-center justify-center md:justify-start mb-6">
             <div className="h-6 w-6 rounded-full text-blue-500 mr-2">
